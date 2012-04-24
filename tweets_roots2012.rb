@@ -4,6 +4,7 @@ require 'sinatra'
 require 'twitter'
 require 'redis'
 require 'datamapper'
+require './tweet_collector'
 
 enable :sessions, :logging
 
@@ -17,16 +18,8 @@ helpers do
   end
 end
 
-
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/tweets.db")
+DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/tweets.db")
 DataMapper.auto_migrate!
-
-
-
-
-
-
 
 get '/' do
   @tweeters,@tweets =  get_tweet_data
