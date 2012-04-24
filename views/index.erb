@@ -1,0 +1,23 @@
+<div class="hero-unit">
+  <h1>ROOTS 2012 Tweets</h1>
+  <% if @error %><div class="error"><%= @error %></div><br/><% end %>
+</div>
+
+<% if @tweeters %>
+<div class="row">
+  <div class="span8">
+    <p class="message-results"><strong><%= session[:users].count %></strong> Brukere som har twittret hashtaggen <%= hashtag_link(session[:hashtag]) %>:</p>
+
+    <div class="roundbox">
+      <% @tweeters.each do |user,value| %>
+        <div class="logo">
+            <img src=<%= value[:pic] %>  width="75"  height="75"/>
+            <h4><%= twitter_user_link(user,"[#{value[:cnt]}]") %> </h4>
+          </div>
+      <%end%>
+    </div>
+
+
+  </div>
+</div>
+<% end %>

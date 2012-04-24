@@ -1,0 +1,66 @@
+/* @override http://twitsort.dev/css/style.css */
+
+.content {
+  background-color: #fff;
+  padding: 20px;
+  min-height: 300px;
+}
+
+.hero-unit {
+  padding: 30px;
+}
+
+.hero-unit h1 {
+  margin-bottom: 5px;
+  margin-left: -10px;
+}
+
+form {
+  margin-top: 25px;
+}
+
+ul {
+  margin-left: 0px;
+  overflow: auto;
+}
+
+li a {
+  color: #909090;
+}
+
+li a:hover {
+  color: #535353;
+}
+
+p.message-results {
+  text-align: center;
+}
+
+div.options {
+  text-align: center;
+}
+
+ul li {
+  float: left;
+  list-style: none;
+  margin-right: 10px;
+}
+
+span#winner {
+  font: bold 40px Arial, Helvetica, Geneva, sans-serif;
+}
+
+div.roundbox {
+    background-color:#fff;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    color:#444;
+    padding:10px;
+    text-align:center;
+}
+
+.logo{
+    float:left;
+    width:150px;
+}
