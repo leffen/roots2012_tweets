@@ -108,7 +108,7 @@ def get_tweet_data(num_tweeters=100,num_tweets=100)
     users << u
   end
 
-  tweets = Tweet.all(order: :id.desc, limit: num_tweets)
+  tweets = Tweet.all(order: :created_at.desc, limit: num_tweets)
 
   [users,tweets]
 end
