@@ -1,25 +1,8 @@
 /* @override http://twitsort.dev/css/style.css */
 
-.content {
-  background-color: #fff;
-  padding: 20px;
-  min-height: 300px;
-}
-
-.hero-unit {
-  padding: 30px;
-}
-
-.hero-unit h1 {
-  margin-bottom: 5px;
-  margin-left: -10px;
-}
-
-form {
-  margin-top: 25px;
-}
 
 ul {
+	width:100%;
   margin-left: 0px;
   overflow: auto;
 }
@@ -43,12 +26,12 @@ div.options {
 ul li {
   float: left;
   list-style: none;
-  margin-right: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+
+  width:100%;
 }
 
-span#winner {
-  font: bold 40px Arial, Helvetica, Geneva, sans-serif;
-}
 
 div.roundbox {
     background-color:#fff;
@@ -60,7 +43,45 @@ div.roundbox {
     text-align:center;
 }
 
+
 .logo{
     float:left;
     width:150px;
+}
+
+.subhead {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	text-align: center;
+}
+
+.subhead h1 {
+	font-size:54px;
+}
+
+.tweet {
+	float:left;
+	width: 100%;
+	background-color:#eee;
+	-moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    color:#444;
+    padding:10px;
+    text-align:left;
+	margin-bottom: 10px;
+	font-size: large;
+}
+
+.tweet img {
+	float: left;
+  padding : 5px;
+}
+
+.tweet_text {
+	color: black;
+}
+.tweet a {
+	color: orange;
+	height: 30px;
 }

@@ -1,23 +1,32 @@
-<div class="hero-unit">
+<div class="row-fluid">
+	<div class="subhead">
   <h1>ROOTS 2012 Tweets</h1>
   <% if @error %><div class="error"><%= @error %></div><br/><% end %>
+	</div>
 </div>
 
-<% if @tweeters %>
-<div class="row">
-  <div class="span8">
-    <p class="message-results"><strong><%= session[:users].count %></strong> Brukere som har twittret hashtaggen <%= hashtag_link(session[:hashtag]) %>:</p>
-
+<div class="row-fluid">
+  <div class="span4">
     <div class="roundbox">
-      <% @tweeters.each do |user,value| %>
+      <% @tweeters.each do |tweeter| %>
         <div class="logo">
-            <img src=<%= value[:pic] %>  width="75"  height="75"/>
-            <h4><%= twitter_user_link(user,"[#{value[:cnt]}]") %> </h4>
+            <img src="<%= tweeter[2] %>"  width="75"  height="75"/>
+            <h4><%= twitter_user_link(tweeter[0],"[#{tweeter[1]}]") %> </h4>
           </div>
-      <%end%>
+      <%end if @tweeters %>
     </div>
-
-
+  </div>
+  <div class="span8">
+	<ul>
+      <% @tweets.each do |tweet| %>
+       <li>
+ 		<div class="tweet">
+		   <img src="<%= tweet.profile_image_url %>"  width="75"  height="75"/>
+           <div class="author"><%= twitter_user_link(tweet.from_user) %> </div>
+           <div class="tweet_text"><%= tweet.text %> </div>
+          </div>
+		</li>
+      <%end if @tweets %>
+	<ul>
   </div>
 </div>
-<% end %>

@@ -1,6 +1,7 @@
 require "test/unit"
 require 'data_mapper'
 require 'dm-sqlite-adapter'
+require 'benchmark'
 require './tweet_collector'
 
 class TweetCollectorTest < Test::Unit::TestCase
@@ -21,7 +22,14 @@ class TweetCollectorTest < Test::Unit::TestCase
 
   # Fake test
   def test_collector
-    update_tweets('#roots2012')
-    puts "tweeters =#{get_tweet_data}"
+    
+    Benchmark.bm do|b|
+      b.report("update:tweets") do
+        update_tweets('#roots2012')
+      end
+      b.report("update:tweets") do
+        @tweeters, @tweets = get_tweet_data
+      end
+    end
   end
 end

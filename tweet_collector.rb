@@ -83,8 +83,6 @@ def update_tweets(tag)
     return if trottle_twitter_call(Time.parse(last_update))
   end
 
-  puts "updates messages"
-
   Twitter.search(tag, rpp: 100, since_id: last_twitter_id ).each do |tweet|
     tweet_key = "tweet:#{tweet.id}"
     if !r.exists(tweet_key)
@@ -100,9 +98,9 @@ def update_tweets(tag)
   r.set("last_update",Time.now)
 end
 
-def get_tweet_data
+def get_tweet_data(num_tweeters=100,num_tweets=100)
   r = Redis.new
-  top_users =  group_set_with_scores( r.zrange('tweeters',0,10,with_scores: true))
+  top_users =  group_set_with_scores( r.zrevrange('tweeters',0,num_tweeters,with_scores: true))
   users = []
   top_users.each do |u|
     p = User.first(name: u[0])
@@ -110,7 +108,7 @@ def get_tweet_data
     users << u
   end
 
-  tweets = Tweet.all(order: id.desc, limit: 20)
+  tweets = Tweet.all(order: :id.desc, limit: num_tweets)
 
   [users,tweets]
 end

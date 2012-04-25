@@ -1,9 +1,10 @@
 # encoding: utf-8
 
+require 'bundler/setup'
 require 'sinatra'
 require 'twitter'
-require 'redis'
-require 'datamapper'
+require 'data_mapper'
+require 'dm-sqlite-adapter'
 require './tweet_collector'
 
 enable :sessions, :logging
@@ -18,10 +19,17 @@ helpers do
   end
 end
 
+configure do
+  require 'redis'
+  uri = URI.parse(ENV["REDISTOGO_URL"])
+  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+end
+
 DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/tweets.db")
-DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
 
 get '/' do
+  update_tweets('#roots2012')
   @tweeters,@tweets =  get_tweet_data
   
   erb :index
