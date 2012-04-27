@@ -74,30 +74,35 @@ def trottle_twitter_call(dt)
 end
 
 
-def update_tweets(tag)
-  r = Redis.new
+def do_twitter_search(last_twitter_id, redis, tag)
+  Twitter.search(tag, rpp: 100, since_id: last_twitter_id).each do |tweet|
+    tweet_key = "tweet:#{tweet.id}"
+    if !redis.exists(tweet_key)
+      t               = Tweet.save_twitter_tweet({created_at: tweet.created_at, from_user: tweet.from_user, text: tweet.text, twitter_id: tweet.id, profile_image_url: tweet.profile_image_url, source: tweet.source, to_user: tweet.to_user})
+      last_twitter_id = tweet.id
+      redis.zincrby('tweeters', 1, tweet.from_user)
+      redis.set(tweet_key, tweet.to_json)
+      last_twitter_id = tweet.id
+    end
+  end
+  last_twitter_id
+end
 
-  last_twitter_id = r.get("last_tweet_#{tag}")
-  last_update = r.get("last_update")
+def update_tweets(tag,page=1)
+  redis = Redis.new
+
+  last_twitter_id = redis.get("last_tweet_#{tag}")
+  last_update = redis.get("last_update")
   if last_update
     return if trottle_twitter_call(Time.parse(last_update))
   end
 
   puts "updates messages"
 
-  Twitter.search(tag, rpp: 100, since_id: last_twitter_id ).each do |tweet|
-    tweet_key = "tweet:#{tweet.id}"
-    if !r.exists(tweet_key)
-      t = Tweet.save_twitter_tweet({created_at: tweet.created_at, from_user: tweet.from_user, text: tweet.text, twitter_id: tweet.id, profile_image_url: tweet.profile_image_url, source: tweet.source, to_user: tweet.to_user})
-      last_twitter_id = tweet.id
-      r.zincrby('tweeters',1,tweet.from_user)
-      r.set(tweet_key,tweet.to_json)
-      last_twitter_id = tweet.id
-    end
-  end
+  last_twitter_id = do_twitter_search(last_twitter_id, redis, tag)
 
-  r.set("last_tweet_#{tag}",last_twitter_id)
-  r.set("last_update",Time.now)
+  redis.set("last_tweet_#{tag}",last_twitter_id)
+  redis.set("last_update",Time.now)
 end
 
 def get_tweet_data
