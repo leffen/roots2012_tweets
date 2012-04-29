@@ -20,6 +20,7 @@ class User
   property :name, String, length: 100
   property :profile_image_url, String, length: 255
   property :twitter_id, String, length: 100
+  property :twitter_attributes_json, Text
 
 
   has n, :tweets
@@ -37,13 +38,17 @@ class Tweet
   property :profile_image_url, String, length: 255
   property :source, String, length: 255
   property :to_user, String, length: 100
+  property :twitter_attributes_json, Text
 
   belongs_to :user
 
-  def self.save_twitter_tweet(src_tweet)
-    u = User.first_or_create(name: src_tweet[:from_user])
+  def self.save_twitter_tweet(src_tweet,user_data)
+    u = User.first_or_create(twitter_id: src_tweet[:from_user])
     if u.profile_image_url.to_s.length == 0
+      puts "Adding user #{user_data}"
       u.profile_image_url = src_tweet[:profile_image_url]
+      u.name = user_data["name"] if user_data
+      u.twitter_attributes_json = user_data.to_json if user_data
       u.save
       check_dm_save u,src_tweet,'Hulk'
     end
