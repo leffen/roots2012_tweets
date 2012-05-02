@@ -36,8 +36,8 @@ class TweetCollectorTest < Test::Unit::TestCase
   end
 
   def test_find_user_data
-    user_data = @collector.get_user_info('leffen')
-    puts "user_data=#{user_data.inspect}"
-
+    user_data = JSON.parse( @collector.get_user_info('leffen'))
+    #pp user_data
+    assert_equal "leffen",user_data["name"],"Her burde nok navnet vore leffen"
   end
 end

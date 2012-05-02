@@ -83,6 +83,7 @@ class TweetCollector
       p = User.first(name: u[0])
       u << p.profile_image_url if p
       users << u
+      puts "u = #{u}"
     end
 
     #tweets = Tweet.all(order: :created_at.desc, limit: num_tweets)
