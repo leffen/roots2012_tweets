@@ -48,7 +48,7 @@ class TweetCollector
     Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
       unless @redis.hexists(TWITTER_TWEETS,tweet.id.to_s)
         puts "Adding tweet #{tweet.attrs}"
-        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),get_user_info(tweet.from_user))
+        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),get_user_info(tweet.from_user).attrs )
         last_twitter_id = tweet.id
         @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
         @redis.hset( TWITTER_TWEETS, tweet.id.to_s, tweet.attrs.to_json)
