@@ -40,20 +40,22 @@ class Tweet
   property :to_user, String, length: 100
   property :twitter_attributes_json, Text
 
-  belongs_to :user
+  belongs_to :user, :required => false
 
-  def self.save_twitter_tweet(src_tweet,user_data)
-    u = User.first_or_create(twitter_id: src_tweet[:from_user])
+  def self.save_twitter_tweet(src_tweet,twitter_id,name=nil,profile_image_url=nil, user_data={})
+
+    u = User.first_or_create(twitter_id: twitter_id)
     if u.profile_image_url.to_s.length == 0
-      puts "Adding user #{user_data}"
-      u.profile_image_url = src_tweet[:profile_image_url]
-      u.name = user_data["name"] if user_data
+      puts "Adding user #{twitter_id}"
+      u.profile_image_url = profile_image_url
+      u.name = name if name
       u.twitter_attributes_json = user_data.to_json if user_data
       u.save
       check_dm_save u,src_tweet,'Hulk'
     end
+
     t = self.create(src_tweet)
-    t.user = u
+    t.user = u if u
     t.save
     check_dm_save t,src_tweet,'Hulk 2'
     t

@@ -32,12 +32,12 @@ class TweetCollector
     {created_at: tweet.created_at, from_user: tweet.from_user, text: tweet.text, twitter_id: tweet.id, profile_image_url: tweet.profile_image_url, source: tweet.source, to_user: tweet.to_user}
   end
 
+
   def get_user_info(twitter_id)
     if @redis.hexists(TWITTER_USERS,twitter_id)
-      user_data = @redis.hget(TWITTER_USERS,twitter_id)
+      user_data = JSON.parse(@redis.hget(TWITTER_USERS,twitter_id))
     else
       user_data = Twitter.user(twitter_id).attrs
-      puts "user_data=#{user_data}"
       @redis.hset(TWITTER_USERS,twitter_id,user_data.to_json)
     end
     user_data
@@ -49,12 +49,10 @@ class TweetCollector
       unless @redis.hexists(TWITTER_TWEETS,tweet.id.to_s)
 
         user_info = get_user_info(tweet.from_user)
-        pp user_info
-        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),user_info)
+        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),tweet.from_user,user_info["name"], tweet.profile_image_url, user_info)
         last_twitter_id = tweet.id
         @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
         @redis.hset( TWITTER_TWEETS, tweet.id.to_s, tweet.attrs.to_json) if tweet.attrs
-        pp tweet unless tweet.attrs
         last_twitter_id = tweet.id
       end
     end
@@ -80,13 +78,12 @@ class TweetCollector
 
 
     top_users = group_set_with_scores(@redis.zrevrange(TWEETERS_HIGHSCORE, 0, num_tweeters, with_scores: true))
-    users     = []
 
-    top_users.each do |u|
-      p = User.first(name: u[0])
+    users = top_users.map do |u|
+      p = User.first(twitter_id: u[0])
+      puts "--- Fant ikke #{u[0]} u=#{u}" unless p
       u << p.profile_image_url if p
-      users << u
-      puts "u = #{u}"
+      u
     end
 
     #tweets = Tweet.all(order: :created_at.desc, limit: num_tweets)
