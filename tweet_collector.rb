@@ -36,9 +36,9 @@ class TweetCollector
     if @redis.hexists(TWITTER_USERS,twitter_id)
       user_data = @redis.hget(TWITTER_USERS,twitter_id)
     else
-      user_data = Twitter.user(twitter_id)
-      puts "user_data=#{user_data.attrs}"
-      @redis.hset(TWITTER_USERS,twitter_id,user_data.attrs.to_json)
+      user_data = Twitter.user(twitter_id).attrs
+      puts "user_data=#{user_data}"
+      @redis.hset(TWITTER_USERS,twitter_id,user_data.to_json)
     end
     user_data
   end
@@ -47,11 +47,14 @@ class TweetCollector
   def do_twitter_search(last_twitter_id,  tag,page=1)
     Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
       unless @redis.hexists(TWITTER_TWEETS,tweet.id.to_s)
-        puts "Adding tweet #{tweet.attrs}"
-        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),get_user_info(tweet.from_user).attrs )
+
+        user_info = get_user_info(tweet.from_user)
+        pp user_info
+        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),user_info)
         last_twitter_id = tweet.id
         @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
-        @redis.hset( TWITTER_TWEETS, tweet.id.to_s, tweet.attrs.to_json)
+        @redis.hset( TWITTER_TWEETS, tweet.id.to_s, tweet.attrs.to_json) if tweet.attrs
+        pp tweet unless tweet.attrs
         last_twitter_id = tweet.id
       end
     end
