@@ -6,27 +6,25 @@
 </div>
 
 <div class="row-fluid">
-  <div class="span4">
-    <div class="roundbox">
+  <div class="span6">
       <% @tweeters.each do |tweeter| %>
         <div class="logo">
             <img src="<%= tweeter[2] %>"  width="75"  height="75"/>
-            <h4><%= twitter_user_link(tweeter[0],"[#{tweeter[1]}]") %> </h4>
+            <div class="author"><%=  "#{tweeter[3]} [#{tweeter[1]}]"  %> </div>
+            <div id="twitter_id"><%= twitter_user_link(tweeter[0]) %> </div>
           </div>
       <%end if @tweeters %>
-    </div>
   </div>
-  <div class="span8">
+  <div class="span9">
 	<ul>
       <% @tweets.each do |tweet| %>
        <li>
  		<div class="tweet">
-		   <img src="<%= tweet.user.profile_image_url %>"  width="75"  height="75"/>
-           <div class="author"><%= twitter_user_link(tweet.user.twitter_id) %> </div>
-           <div class="tweet_text"><%= tweet.text %> </div>
-           <div class="tweet_time"><%= tweet.created_at %> </div>
-			
-          </div>
+       <div class="tweet_text"><%= tweet.text %> </div>
+		   <img src="<%= tweet.user.profile_image_url %>"  width="50"  height="50"/>
+         <div class="author"><%= tweet.user.name %> </div>
+        <div class="twitter_id"><%= twitter_user_link(tweet.user.twitter_id) %> </div> <div class="tweet_time"><%= twitter_time(tweet.created_at) %> </div>
+      </div>
 		</li>
       <%end if @tweets %>
 	</ul>

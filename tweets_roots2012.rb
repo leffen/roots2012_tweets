@@ -18,6 +18,11 @@ helpers do
   def twitter_user_link(user,extra=nil)
     "<a href='http://twitter.com/#!/#{user}' target='twitter'>@#{user} #{extra if extra}</a>"
   end
+
+
+  def twitter_time(time)
+    time.strftime("%d.%m.%Y %H:%M") if time
+  end
 end
 
 configure do

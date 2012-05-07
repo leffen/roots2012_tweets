@@ -1,26 +1,18 @@
-/* @override http://twitsort.dev/css/style.css */
+.subhead {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	text-align: center;
+}
 
+.subhead h1 {
+	font-size:54px;
+}
 
 ul {
 	width:100%;
-  	margin-left: 0;
-  	overflow: auto;
-}
-
-li a {
-  color: #909090;
-}
-
-li a:hover {
-  color: #535353;
-}
-
-p.message-results {
-  text-align: center;
-}
-
-div.options {
-  text-align: center;
+  margin-left: 0;
+  overflow: auto;
+  list-style: none;
 }
 
 ul li {
@@ -32,57 +24,99 @@ ul li {
   width:90%;
 }
 
-
 div.roundbox {
-    background-color:#fff;
     -moz-border-radius:6px;
     -webkit-border-radius:6px;
     border-radius:6px;
-    color:#444;
     padding:10px;
-    text-align:center;
 }
 
 
-.logo{
-    float:left;
-    width:150px;
-}
 
-.subhead {
-	margin-top: 40px;
-	margin-bottom: 40px;
-	text-align: center;
-}
-
-.subhead h1 {
-	font-size:54px;
-}
 
 .tweet {
 	float:left;
 	width: 100%;
-	background-color:#eee;
-	-moz-border-radius:6px;
+	background-color:#F5F5F5;
+  -moz-border-radius:6px;
     -webkit-border-radius:6px;
     border-radius:6px;
-    color:#444;
+    color:#E5644C;
     padding:10px;
     text-align:left;
 	margin-bottom: 10px;
-	font-size: large;
+  font-size: 18px;
+  line-height: 20px;
+  border: solid 1px silver;
 }
 
 .tweet img {
 	float: left;
-  padding : 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 15px;
+}
+
+.tweet_data {
+  float: left;
 }
 
 .tweet_text {
+  padding: 10px;
+  font-weight: lighter;
 	color: black;
 }
+
+.author {
+  padding-top: 15px;
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .tweet a {
-	color: orange;
-	height: 30px;
-	font-size:24px;
+	color: #58B5CC;
+  font-size: 14px;
+  float: left;
+  padding-right: 10px;
+}
+
+.tweet_time {
+  color: #58B5CC;
+  font-size: 14px;
+  float: left;
+}
+
+.logo {
+  float:left;
+ 	width: 100%;
+ 	background-color:#F5F5F5;
+   -moz-border-radius:6px;
+     -webkit-border-radius:6px;
+     border-radius:6px;
+     color:#E5644C;
+     text-align:left;
+  	margin-bottom: 10px;
+   font-size: 14px;
+   line-height: 16px;
+  border: solid 1px silver;
+}
+
+.logo img{
+    float:left;
+  padding-right: 10px;
+}
+
+.logo div.author {
+  font-size: 18px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.logo a {
+	color: #58B5CC;
+  font-size: 14px;
+  float: left;
+  padding-right: 10px;
 }

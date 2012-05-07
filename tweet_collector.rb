@@ -82,7 +82,10 @@ class TweetCollector
     users = top_users.map do |u|
       p = User.first(twitter_id: u[0])
       puts "--- Fant ikke #{u[0]} u=#{u}" unless p
-      u << p.profile_image_url if p
+      if p
+        u << p.profile_image_url
+        u << p.name
+      end
       u
     end
 
