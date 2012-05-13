@@ -29,7 +29,13 @@ class TweetCollector
   end
 
   def map_twitter_tweet(tweet)
-    {created_at: tweet.created_at, from_user: tweet.from_user, text: tweet.text, twitter_id: tweet.id, profile_image_url: tweet.profile_image_url, source: tweet.source, to_user: tweet.to_user}
+    {created_at: tweet.created_at,
+     from_user: tweet.from_user,
+     text: tweet.text,
+     twitter_id: tweet.id,
+     profile_image_url: tweet.profile_image_url,
+     source: tweet.source,
+     to_user: tweet.to_user}
   end
 
 
@@ -38,7 +44,6 @@ class TweetCollector
       user_data = JSON.parse(@redis.hget(TWITTER_USERS,twitter_id))
     else
       user_data = Twitter.user(twitter_id).attrs
-      @redis.hset(TWITTER_USERS,twitter_id,user_data.to_json)
     end
     user_data
   end
@@ -46,13 +51,11 @@ class TweetCollector
 
   def do_twitter_search(last_twitter_id,  tag,page=1)
     Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
-      unless @redis.hexists(TWITTER_TWEETS,tweet.id.to_s)
-
-        user_info = get_user_info(tweet.from_user)
+      unless Tweet.count(:twitter_id => tweet.id.to_s) > 0
+       user_info = get_user_info(tweet.from_user)
         t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),tweet.from_user,user_info["name"], tweet.profile_image_url, user_info)
         last_twitter_id = tweet.id
         @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
-        @redis.hset( TWITTER_TWEETS, tweet.id.to_s, tweet.attrs.to_json) if tweet.attrs
         last_twitter_id = tweet.id
       end
     end
