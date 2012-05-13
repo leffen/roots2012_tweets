@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 require 'data_mapper'
+require 'twitter-text'
+require 'open-uri'
 
 def check_dm_save(obj, data_src, message)
   unless obj.saved? then
@@ -29,6 +31,8 @@ end
 
 class Tweet
   include DataMapper::Resource
+  include Twitter::Autolink
+  include Twitter::Extractor
 
   property :id, Serial
   property :created_at, DateTime
@@ -44,6 +48,16 @@ class Tweet
 
   def self.save_twitter_tweet(src_tweet,twitter_id,name=nil,profile_image_url=nil, user_data={})
 
+    usr = save_twitter_user(name, twitter_id, profile_image_url, user_data)
+
+    t = self.create(src_tweet)
+    t.user = usr if usr
+    t.save
+    check_dm_save t,src_tweet,'Hulk 2'
+    t
+  end
+
+  def self.save_twitter_user(name, twitter_id, profile_image_url, user_data)
     u = User.first_or_create(twitter_id: twitter_id)
     if u.profile_image_url.to_s.length == 0
       puts "Adding user #{twitter_id}"
@@ -51,13 +65,19 @@ class Tweet
       u.name = name if name
       u.twitter_attributes_json = user_data.to_json if user_data
       u.save
-      check_dm_save u,src_tweet,'Hulk'
+      check_dm_save u, src_tweet, 'Hulk'
+    end
+    u
+  end
+
+  def to_html
+    extract_urls(@text).each do |url|
+      #f = open(url)
+      #puts "------ "
+      #puts "url = #{url}"
+      #puts f.readlines.join
     end
 
-    t = self.create(src_tweet)
-    t.user = u if u
-    t.save
-    check_dm_save t,src_tweet,'Hulk 2'
-    t
+    auto_link(@text)
   end
 end

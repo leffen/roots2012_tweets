@@ -20,7 +20,7 @@
       <% @tweets.each do |tweet| %>
        <li>
  		<div class="tweet">
-       <div class="tweet_text"><%= tweet.text %> </div>
+       <div class="tweet_text"><%= tweet.to_html %> </div>
 		   <img src="<%= tweet.user.profile_image_url %>"  width="50"  height="50"/>
          <div class="author"><%= tweet.user.name %> </div>
         <div class="twitter_id"><%= twitter_user_link(tweet.user.twitter_id) %> </div> <div class="tweet_time"><%= twitter_time(tweet.created_at) %> </div>

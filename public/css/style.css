@@ -67,6 +67,7 @@ div.roundbox {
 	color: black;
 }
 
+
 .author {
   padding-top: 15px;
   color: black;
@@ -80,6 +81,14 @@ div.roundbox {
   float: left;
   padding-right: 10px;
 }
+
+.tweet_text a {
+  font-weight: lighter;
+	color: #58B5CC;
+  font-size: 18px;
+  float:none;
+}
+
 
 .tweet_time {
   color: #58B5CC;

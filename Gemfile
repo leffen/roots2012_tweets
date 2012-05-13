@@ -9,5 +9,7 @@ gem 'dm-sqlite-adapter'
 gem 'rake'
 gem 'shotgun'
 gem 'thin'
+gem 'twitter-text'
+gem 'nokogiri'
 
 

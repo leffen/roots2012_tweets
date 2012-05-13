@@ -11,8 +11,11 @@ class TweetCollector
   TWITTER_TWEETS = 'twitter_tweets'
   TWEETERS_HIGHSCORE = 'twitter_tweeters'
 
+  attr :last_twitter_id  , :last_call_time
+
   def initialize(redis=nil)
     @redis     = redis||Redis.new
+    @last_twitter_id = 0
   end
 
   def group_set_with_scores(set_with_scores)
@@ -40,8 +43,9 @@ class TweetCollector
 
 
   def get_user_info(twitter_id)
-    if @redis.hexists(TWITTER_USERS,twitter_id)
-      user_data = JSON.parse(@redis.hget(TWITTER_USERS,twitter_id))
+    user = User.first(twitter_id: twitter_id)
+    if user
+      user_data = user.twitter_attributes_json
     else
       user_data = Twitter.user(twitter_id).attrs
     end
@@ -49,31 +53,21 @@ class TweetCollector
   end
 
 
-  def do_twitter_search(last_twitter_id,  tag,page=1)
+  def do_twitter_search( tag,page=1)
     Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
       unless Tweet.count(:twitter_id => tweet.id.to_s) > 0
        user_info = get_user_info(tweet.from_user)
         t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),tweet.from_user,user_info["name"], tweet.profile_image_url, user_info)
-        last_twitter_id = tweet.id
+        @last_twitter_id = tweet.id
+
         @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
-        last_twitter_id = tweet.id
       end
     end
-    last_twitter_id
+    @last_twitter_id
   end
 
   def update_tweets(tag, page=1)
-    last_twitter_id = @redis.get("last_tweet_#{tag}")
-    last_update     = @redis.get("last_update")
-    if last_update
-      return if trottle_twitter_call(Time.parse(last_update))
-    end
-
-    puts "updates messages"
-    last_twitter_id = do_twitter_search(last_twitter_id, tag, page)
-
-    @redis.set("last_tweet_#{tag}", last_twitter_id)
-    @redis.set("last_update", Time.now)
+    do_twitter_search( tag, page)
   end
 
   # Collects tweets for a given tag

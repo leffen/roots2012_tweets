@@ -64,6 +64,7 @@ GEM
     json_pure (1.6.6)
     multi_json (1.0.4)
     multipart-post (1.1.5)
+    nokogiri (1.5.2)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -90,6 +91,8 @@ GEM
       faraday (~> 0.7)
       multi_json (~> 1.0)
       simple_oauth (~> 0.1)
+    twitter-text (1.4.17)
+      activesupport
     uuidtools (2.1.2)
 
 PLATFORMS
@@ -98,6 +101,7 @@ PLATFORMS
 DEPENDENCIES
   data_mapper
   dm-sqlite-adapter
+  nokogiri
   rake
   redis
   shotgun
@@ -105,3 +109,4 @@ DEPENDENCIES
   sinatra-redis
   thin
   twitter
+  twitter-text
