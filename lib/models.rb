@@ -71,12 +71,8 @@ class Tweet
   end
 
   def to_html
-    extract_urls(@text).each do |url|
-      #f = open(url)
-      #puts "------ "
-      #puts "url = #{url}"
-      #puts f.readlines.join
-    end
+   # extract_urls(@text).each do |url|
+   # end
 
     auto_link(@text)
   end

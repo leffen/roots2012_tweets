@@ -1,21 +1,23 @@
 # encoding: utf-8
 
 require 'json'
-require 'redis'
 require 'twitter'
 require_relative './lib/models'
 require 'pp'
+require_relative './lib/high_score_card'
 
 class TweetCollector
-  TWITTER_USERS= 'twitter_users'
-  TWITTER_TWEETS = 'twitter_tweets'
+  attr :score_card
+  TWITTER_USERS      = 'twitter_users'
+  TWITTER_TWEETS     = 'twitter_tweets'
   TWEETERS_HIGHSCORE = 'twitter_tweeters'
 
-  attr :last_twitter_id  , :last_call_time
+  attr :last_twitter_id, :last_call_time
 
-  def initialize(redis=nil)
-    @redis     = redis||Redis.new
-    @last_twitter_id = 0
+  def initialize(score_card,last_twitter_id=0)
+    @score_card      = score_card|| HighScoreCard.new
+    @score_card.name = TWEETERS_HIGHSCORE
+    @last_twitter_id = last_twitter_id
   end
 
   def group_set_with_scores(set_with_scores)
@@ -32,13 +34,13 @@ class TweetCollector
   end
 
   def map_twitter_tweet(tweet)
-    {created_at: tweet.created_at,
-     from_user: tweet.from_user,
-     text: tweet.text,
-     twitter_id: tweet.id,
+    {created_at:        tweet.created_at,
+     from_user:         tweet.from_user,
+     text:              tweet.text,
+     twitter_id:        tweet.id,
      profile_image_url: tweet.profile_image_url,
-     source: tweet.source,
-     to_user: tweet.to_user}
+     source:            tweet.source,
+     to_user:           tweet.to_user}
   end
 
 
@@ -53,30 +55,26 @@ class TweetCollector
   end
 
 
-  def do_twitter_search( tag,page=1)
+  def update_tweets(tag, page=1)
     Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
       unless Tweet.count(:twitter_id => tweet.id.to_s) > 0
-       user_info = get_user_info(tweet.from_user)
-        t = Tweet.save_twitter_tweet(map_twitter_tweet(tweet),tweet.from_user,user_info["name"], tweet.profile_image_url, user_info)
+        user_info = get_user_info(tweet.from_user)
+        Tweet.save_twitter_tweet(map_twitter_tweet(tweet), tweet.from_user, user_info["name"], tweet.profile_image_url, user_info)
         @last_twitter_id = tweet.id
 
-        @redis.zincrby( TWEETERS_HIGHSCORE , 1, tweet.from_user)
+        @score_card.score_add(tweet.from_user)
       end
     end
     @last_twitter_id
   end
 
-  def update_tweets(tag, page=1)
-    do_twitter_search( tag, page)
-  end
 
   # Collects tweets for a given tag
-  def get_tweet_data(num_tweeters=100, num_tweets=100)
+  def get_tweet_data(num_tweeters=999, num_tweets=100)
 
+    top_users = @score_card.score_card()
 
-    top_users = group_set_with_scores(@redis.zrevrange(TWEETERS_HIGHSCORE, 0, num_tweeters, with_scores: true))
-
-    users = top_users.map do |u|
+    users  = top_users.map do |u|
       p = User.first(twitter_id: u[0])
       puts "--- Fant ikke #{u[0]} u=#{u}" unless p
       if p
