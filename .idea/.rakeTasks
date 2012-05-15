@@ -4,4 +4,4 @@ You are allowed to:
 1. Remove rake task
 2. Add existing rake tasks
 To add existing rake tasks automatically delete this file and reload the project.
---><RakeGroup description="" fullCmd="" taksId="rake"><RakeTask description="Henter alle tweets" fullCmd="hent_alle_tweets" taksId="hent_alle_tweets" /><RakeTask description="" fullCmd="list_old_tweets" taksId="list_old_tweets" /><RakeTask description="" fullCmd="sync_dm_redis" taksId="sync_dm_redis" /><RakeTask description="" fullCmd="sync_redis_dm" taksId="sync_redis_dm" /></RakeGroup></Settings>
+--><RakeGroup description="" fullCmd="" taksId="rake"><RakeTask description="Henter alle tweets" fullCmd="hent_alle_tweets" taksId="hent_alle_tweets" /><RakeTask description="Rebuilds score card based on database" fullCmd="rebuild_score_card" taksId="rebuild_score_card" /></RakeGroup></Settings>

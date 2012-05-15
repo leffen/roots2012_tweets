@@ -8,8 +8,6 @@ require_relative './lib/high_score_card'
 
 class TweetCollector
   attr :score_card
-  TWITTER_USERS      = 'twitter_users'
-  TWITTER_TWEETS     = 'twitter_tweets'
   TWEETERS_HIGHSCORE = 'twitter_tweeters'
 
   attr :last_twitter_id, :last_call_time
@@ -17,7 +15,7 @@ class TweetCollector
   def initialize(score_card,last_twitter_id=0)
     @score_card      = score_card|| HighScoreCard.new
     @score_card.name = TWEETERS_HIGHSCORE
-    @last_twitter_id = last_twitter_id
+    @last_twitter_id = last_twitter_id || 0
   end
 
   def group_set_with_scores(set_with_scores)
@@ -33,6 +31,7 @@ class TweetCollector
     dt ? Time.now - dt < 60 : false
   end
 
+  # Maps twitter tweet to local database
   def map_twitter_tweet(tweet)
     {created_at:        tweet.created_at,
      from_user:         tweet.from_user,
@@ -44,6 +43,7 @@ class TweetCollector
   end
 
 
+  # Locates user information. First check locally then on twitter
   def get_user_info(twitter_id)
     user = User.first(twitter_id: twitter_id)
     if user
@@ -54,14 +54,14 @@ class TweetCollector
     user_data
   end
 
-
+  # Loads latest tweets from Twitter
   def update_tweets(tag, page=1)
-    Twitter.search(tag, rpp: 100, since_id: last_twitter_id, page: page).each do |tweet|
+    puts "tag=#{tag} page=#{page} last_twitter_id=#{@last_twitter_id}"
+    Twitter.search(tag, rpp: 100, since_id: @last_twitter_id, page: page).each do |tweet|
       unless Tweet.count(:twitter_id => tweet.id.to_s) > 0
         user_info = get_user_info(tweet.from_user)
         Tweet.save_twitter_tweet(map_twitter_tweet(tweet), tweet.from_user, user_info["name"], tweet.profile_image_url, user_info)
         @last_twitter_id = tweet.id
-
         @score_card.score_add(tweet.from_user)
       end
     end

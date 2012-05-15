@@ -7,7 +7,7 @@ require 'data_mapper'
 require 'dm-sqlite-adapter'
 require './tweet_collector'
 require 'sinatra/redis'
-require 'high_score_card'
+require_relative './lib/high_score_card'
 
 enable :sessions, :logging
 
@@ -32,18 +32,13 @@ configure do
 end
 
 
-# Do update the collecgted tweets
-def update_tweets(collector)
-  last_twitter_id = collector.update_tweets('#roots2012',  @redis.hget('tweets_roots2012_config', 'last_twitter_id'))
-  @redis.hset('tweets_roots2012_config', 'last_twitter_id',last_twitter_id)
-  puts "Latest twitter id = #{last_twitter_id}"
-end
-
-
-
 get '/' do
-  collector = TweetCollector.new(HighScoreCard.new(@redis))
-  update_tweets(collector)
+
+  last_twitter_id =  redis.hget('tweets_roots2012_config', 'last_twitter_id')
+  collector = TweetCollector.new(HighScoreCard.new(),last_twitter_id )
+  last_twitter_id= collector.update_tweets('#roots2012')
+  redis.hset('tweets_roots2012_config', 'last_twitter_id',last_twitter_id)
+  puts "Latest twitter id = #{last_twitter_id}"
 
   @tweeters,@tweets =  collector.get_tweet_data
   erb :index

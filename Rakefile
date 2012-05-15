@@ -26,11 +26,12 @@ end
 desc "Rebuilds score card based on database"
 task :rebuild_score_card do
   score_card = HighScoreCard.new(Redis.new)
-  score_card.name = TweetCollector::TWITTER_TWEETS
+  score_card.name = TweetCollector::TWEETERS_HIGHSCORE
   score_card.reset
   Tweet.all().each do |tweet|
     score_card.score_add(tweet.from_user)
   end
+
 end
 
 

@@ -4,11 +4,11 @@ require 'redis'
 
 
 class HighScoreCard
-  attr :storage,:name
+  attr_accessor :storage,:name
 
   def initialize(storage=nil,name="HighScoreCard")
     @name = name
-    @storage = storage || redis.new
+    @storage = storage || Redis.new
   end
 
   def reset

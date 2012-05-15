@@ -30,7 +30,12 @@ class HighScoreCardTest < Test::Unit::TestCase
     (1..100).each{|num|@score_card.score_add("test_#{num}") }
     card = @score_card.score_card()
     assert_equal 101,card.count,'Her burde det bare være 100 på high score listen'
-    pp card
+    (1..100).each{|num|@score_card.score_add("test_1") }
+    card = @score_card.score_card()
+    assert_equal 101,card[0][1], 'Score burde ha vært korrekt'
+    assert_equal 1,card[1][1], 'Score burde ha vært korrekt'
+
+
 
 
   end

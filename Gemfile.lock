@@ -64,7 +64,6 @@ GEM
     json_pure (1.6.6)
     multi_json (1.0.4)
     multipart-post (1.1.5)
-    nokogiri (1.5.2)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -101,7 +100,6 @@ PLATFORMS
 DEPENDENCIES
   data_mapper
   dm-sqlite-adapter
-  nokogiri
   rake
   redis
   shotgun
